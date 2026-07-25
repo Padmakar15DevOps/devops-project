@@ -16,8 +16,6 @@ pipeline {
         stage('Build') {
             steps {
                 dir('hello-app') {
-                    sh 'pwd'
-                    sh 'ls -la'
                     sh 'mvn clean package'
                 }
             }
@@ -29,13 +27,14 @@ pipeline {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
                             mvn clean verify sonar:sonar \
+                            -Dsonar.projectKey=hello-app-devops \
+                            -Dsonar.projectName=hello-app \
                             -Dsonar.ws.timeout=300
                         '''
                     }
                 }
             }
         }
-
     }
 
     post {
