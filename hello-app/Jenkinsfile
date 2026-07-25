@@ -27,9 +27,11 @@ pipeline {
             steps {
                 dir('hello-app') {
                     withSonarQubeEnv('SonarQube') {
-                        sh 'mvn sonar:sonar'
-                    }
-                }
+    sh '''
+        mvn clean verify \
+        org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+    
+}                }
             }
         }
     }
