@@ -27,7 +27,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
                             mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=hello-app-devops \
+                            -Dsonar.projectKey=hello-app-01
                             -Dsonar.projectName=hello-app \
                             -Dsonar.ws.timeout=300
                         '''
