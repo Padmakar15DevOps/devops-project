@@ -12,18 +12,19 @@ pipeline {
                 checkout scm
             }
         }
-
-        stage('Build') {
-            steps {
-                sh 'mvn clean package'
+         stage('Build') {
+             steps {
+                  dir('hello-app') {
+                      sh 'mvn clean package'
+             }
             }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
-                }
+            }
+        
+       stage('SonarQube Analysis') {
+    steps {
+        dir('hello-app') {
+            withSonarQubeEnv('SonarQube') {
+                sh 'mvn sonar:sonar'
             }
         }
     }
