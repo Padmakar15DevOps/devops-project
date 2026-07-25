@@ -28,13 +28,25 @@ pipeline {
                 dir('hello-app') {
                     withSonarQubeEnv('SonarQube') {
                         sh '''
-                            mvn clean verify \
-                            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+                            mvn clean verify sonar:sonar \
+                            -Dsonar.ws.timeout=300
                         '''
                     }
                 }
             }
         }
 
+    }
+
+    post {
+        success {
+            echo 'Build and SonarQube Analysis completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the Jenkins Console Output.'
+        }
+        always {
+            cleanWs()
+        }
     }
 }
