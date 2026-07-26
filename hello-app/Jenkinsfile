@@ -25,25 +25,31 @@ pipeline {
             steps {
                 dir('hello-app') {
                     withSonarQubeEnv('SonarQube') {
-                        sh '''
-                            mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=hello-app-01
-                            -Dsonar.projectName=hello-app \
-                            -Dsonar.ws.timeout=300
-                        '''
+                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=hello-app-01 -Dsonar.projectName=hello-app -Dsonar.ws.timeout=300'
                     }
                 }
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                dir('hello-app') {
+                    sh 'docker build -t hello-app:latest .'
+                }
+            }
+        }
+
     }
 
     post {
         success {
-            echo 'Build and SonarQube Analysis completed successfully!'
+            echo 'Build, SonarQube Analysis and Docker Build completed successfully!'
         }
+
         failure {
             echo 'Pipeline failed. Please check the Jenkins Console Output.'
         }
+
         always {
             cleanWs()
         }
