@@ -31,16 +31,7 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                dir('hello-app') {
-                    sh 'docker build -t hello-app:latest .'
-                }
-            }
-        }
-
-    }
-
+        
     post {
         success {
             echo 'Build, SonarQube Analysis and Docker Build completed successfully!'
