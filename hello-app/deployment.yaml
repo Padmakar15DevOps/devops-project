@@ -1,5 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: hello-app
 
@@ -20,3 +21,6 @@ spec:
       - name: hello-app
         image: padmakar15/hello-app:latest
         imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8080
