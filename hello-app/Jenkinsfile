@@ -31,10 +31,11 @@ pipeline {
             }
         }
 
-        
+    }   // ✅ stages block इथे बंद झाला
+
     post {
         success {
-            echo 'Build, SonarQube Analysis and Docker Build completed successfully!'
+            echo 'Build and SonarQube Analysis completed successfully!'
         }
 
         failure {
