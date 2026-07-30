@@ -5,6 +5,11 @@ pipeline {
         maven 'Maven'
     }
 
+    environment {
+        IMAGE_NAME = "padmakar15/hello-app"
+        IMAGE_TAG = "latest"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -25,17 +30,48 @@ pipeline {
             steps {
                 dir('hello-app') {
                     withSonarQubeEnv('SonarQube') {
-                        sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=hello-app-01 -Dsonar.projectName=hello-app -Dsonar.ws.timeout=300'
+                       sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=hello-app-01 -Dsonar.projectName=hello-app -Dsonar.ws.timeout=300'
                     }
                 }
             }
         }
 
-    }   // ✅ stages block इथे बंद झाला
+        stage('Docker Build') {
+            steps {
+                dir('hello-app') {
+                    sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Kubernetes Deploy') {
+            steps {
+                dir('hello-app/k8s') {
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                }
+            }
+        }
+    }
 
     post {
         success {
-            echo 'Build and SonarQube Analysis completed successfully!'
+            echo 'Build, SonarQube Analysis, Docker Build, Docker Push and Kubernetes Deployment completed successfully!'
         }
 
         failure {
