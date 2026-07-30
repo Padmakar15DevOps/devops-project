@@ -14,7 +14,7 @@ pipeline {
         IMAGE_TAG = "latest"
     }
 
-    stages {
+    stages { 
 
         stage('Checkout') {
             steps {
